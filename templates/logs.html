@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ traduzir({
+        'pt':'Logs de Auditoria',
+        'en':'Audit Logs',
+        'es':'Registros de Auditoría',
+        'de':'Audit-Logs',
+        'ru':'Журналы аудита',
+        'zh':'审计日志',
+        'ar':'سجلات التدقيق',
+        'hi':'ऑडिट लॉग्स'
+    }) }} | AgroDigital5.0™️</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-success">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('painel') }}">AgroDigital5.0™️</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm">
+            {{ traduzir({'pt':'Sair','en':'Logout','es':'Salir','de':'Abmelden','ru':'Выйти','zh':'退出','ar':'خروج','hi':'लॉग आउट'}) }}
+        </a>
+    </div>
+</nav>
+<div class="container mt-5">
+    <h4>
+        {{ traduzir({
+            'pt':'Logs de Auditoria','en':'Audit Logs','es':'Registros de Auditoría','de':'Audit-Logs',
+            'ru':'Журналы аудита','zh':'审计日志','ar':'سجلات التدقيق','hi':'ऑडिट लॉग्स'
+        }) }}
+    </h4>
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>{{ traduzir({'pt':'Usuário','en':'User','es':'Usuario','de':'Benutzer','ru':'Пользователь','zh':'用户','ar':'المستخدم','hi':'उपयोगकर्ता'}) }}</th>
+                <th>{{ traduzir({'pt':'Ação','en':'Action','es':'Acción','de':'Aktion','ru':'Действие','zh':'操作','ar':'الإجراء','hi':'क्रिया'}) }}</th>
+                <th>{{ traduzir({'pt':'Data/Hora','en':'Date/Time','es':'Fecha/Hora','de':'Datum/Uhrzeit','ru':'Дата/Время','zh':'日期/时间','ar':'التاريخ/الوقت','hi':'तिथि/समय'}) }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for l in logs %}
+            <tr>
+                <td>{{ l.user }}</td>
+                <td>{{ l.action }}</td>
+                <td>{{ l.timestamp.strftime("%d/%m/%Y %H:%M:%S") }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="text-center mt-3">
+        <a href="{{ url_for('painel') }}" class="btn btn-outline-secondary">
+            {{ traduzir({'pt':'Voltar ao painel','en':'Back to dashboard','es':'Volver al panel','de':'Zurück zum Dashboard','ru':'Назад к панели','zh':'返回仪表板','ar':'العودة إلى لوحة التحكم','hi':'डैशबोर्ड पर लौटें'}) }}
+        </a>
+    </div>
+</div>
+</body>
+</html>

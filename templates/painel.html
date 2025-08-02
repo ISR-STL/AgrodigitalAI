@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ traduzir({
+        'pt':'Painel | AgroDigital5.0™️',
+        'en':'Dashboard | AgroDigital5.0™️',
+        'es':'Panel | AgroDigital5.0™️',
+        'de':'Dashboard | AgroDigital5.0™️',
+        'ru':'Панель | AgroDigital5.0™️',
+        'zh':'面板 | AgroDigital5.0™️',
+        'ar':'لوحة القيادة | AgroDigital5.0™️',
+        'hi':'डैशबोर्ड | AgroDigital5.0™️'
+    }) }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+      .kpi-box { background: #f6fffa; border-radius: 7px; box-shadow: 0 1px 5px #00c98e1c; padding: 24px 32px; margin-bottom: 30px; }
+      .table thead th { background-color: #e9f5ee; }
+      .table tbody tr:hover { background: #e8fbf1; cursor:pointer; }
+      .filter-bar { background:#f3f8f7; border-radius:8px; margin-bottom:20px; padding:12px; }
+      .btn-export { float:right; }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">{{ traduzir({'pt':'AgroDigital5.0™️','en':'AgroDigital5.0™️','es':'AgroDigital5.0™️','de':'AgroDigital5.0™️','ru':'AgroDigital5.0™️','zh':'AgroDigital5.0™️','ar':'AgroDigital5.0™️','hi':'AgroDigital5.0™️'}) }}</a>
+        <div>
+            <a href="{{ url_for('usuarios') }}" class="btn btn-outline-light btn-sm me-2">{{ traduzir({'pt':'Usuários','en':'Users','es':'Usuarios','de':'Benutzer','ru':'Пользователи','zh':'用户','ar':'المستخدمون','hi':'उपयोगकर्ता'}) }}</a>
+            <a href="{{ url_for('logs') }}" class="btn btn-outline-light btn-sm me-2">{{ traduzir({'pt':'Auditoria','en':'Audit','es':'Auditoría','de':'Audit','ru':'Аудит','zh':'审计','ar':'تدقيق','hi':'लेखा परीक्षा'}) }}</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm">{{ traduzir({'pt':'Sair','en':'Logout','es':'Salir','de':'Abmelden','ru':'Выйти','zh':'退出','ar':'خروج','hi':'लॉग आउट'}) }}</a>
+            <select onchange="window.location='/setlang/'+this.value" class="form-select form-select-sm d-inline w-auto ms-2">
+                {% for l in ['pt','en','es','de','ru','zh','ar','hi'] %}
+                  <option value="{{l}}" {% if lang==l %}selected{% endif %}>{{l|upper}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</nav>
+<div class="container mt-5">
+    <h3>{{ traduzir({'pt':'Dashboard de Vendas','en':'Sales Dashboard','es':'Panel de Ventas','de':'Verkaufsdashboard','ru':'Дашборд продаж','zh':'销售仪表板','ar':'لوحة مبيعات','hi':'सेल्स डैशबोर्ड'}) }}</h3>
+
+    <!-- KPIs -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="kpi-box">
+                <span class="d-block">{{ traduzir({'pt':'Total Vendido:','en':'Total Sold:','es':'Total Vendido:','de':'Gesamt verkauft:','ru':'Всего продано:','zh':'总销售额:','ar':'إجمالي المبيعات:','hi':'कुल बिक्री:'}) }}
+                    <strong>R$ {{ total_vendido }}</strong></span>
+                <span class="d-block">{{ traduzir({'pt':'Saldo em Caixa:','en':'Cash Balance:','es':'Saldo en Caja:','de':'Kassenbestand:','ru':'Баланс:','zh':'现金余额:','ar':'الرصيد النقدي:','hi':'कैश बैलेंस:'}) }}
+                    <strong>R$ {{ saldo_caixa }}</strong></span>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div id="graficoVendas" style="height:150px;"></div>
+        </div>
+    </div>
+
+    <!-- Barra de filtros -->
+    <form method="get" class="filter-bar row g-2 mb-3">
+        <div class="col-md-3">
+            <input type="text" name="investidor" class="form-control" placeholder="{{ traduzir({'pt':'Buscar investidor...','en':'Search investor...','es':'Buscar inversor...','de':'Investor suchen...','ru':'Поиск инвестора...','zh':'搜索投资者...','ar':'بحث عن مستثمر...','hi':'निवेशक खोजें...'}) }}" value="{{ request.args.get('investidor', '') }}">
+        </div>
+        <div class="col-md-2">
+            <select name="token" class="form-control">
+                <option value="">{{ traduzir({'pt':'Token','en':'Token','es':'Token','de':'Token','ru':'Токен','zh':'代币','ar':'رمز','hi':'टोकन'}) }}</option>
+                {% for t in vendas|map(attribute='token')|unique %}
+                  <option value="{{t}}" {% if request.args.get('token','')==t %}selected{% endif %}>{{t}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-control">
+                <option value="">{{ traduzir({'pt':'Status','en':'Status','es':'Estado','de':'Status','ru':'Статус','zh':'状态','ar':'الحالة','hi':'स्थिति'}) }}</option>
+                <option value="Aprovada" {% if request.args.get('status','')=='Aprovada' %}selected{% endif %}>{{ traduzir({'pt':'Aprovada','en':'Approved','es':'Aprobada','de':'Genehmigt','ru':'Одобрено','zh':'批准','ar':'موافق عليه','hi':'स्वीकृत'}) }}</option>
+                <option value="Pendente" {% if request.args.get('status','')=='Pendente' %}selected{% endif %}>{{ traduzir({'pt':'Pendente','en':'Pending','es':'Pendiente','de':'Ausstehend','ru':'В ожидании','zh':'待处理','ar':'قيد الانتظار','hi':'लंबित'}) }}</option>
+                <option value="Cancelada" {% if request.args.get('status','')=='Cancelada' %}selected{% endif %}>{{ traduzir({'pt':'Cancelada','en':'Cancelled','es':'Cancelada','de':'Storniert','ru':'Отменено','zh':'已取消','ar':'ألغيت','hi':'रद्द'}) }}</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="data" class="form-control" value="{{ request.args.get('data', '') }}">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success" type="submit">{{ traduzir({'pt':'Filtrar','en':'Filter','es':'Filtrar','de':'Filtern','ru':'Фильтр','zh':'筛选','ar':'تصفية','hi':'फ़िल्टर करें'}) }}</button>
+        </div>
+        <div class="col-md-1">
+            <a href="{{ url_for('exportar_csv') }}" class="btn btn-outline-success btn-export">{{ traduzir({'pt':'Exportar CSV','en':'Export CSV','es':'Exportar CSV','de':'CSV exportieren','ru':'Экспорт CSV','zh':'导出CSV','ar':'تصدير CSV','hi':'CSV निर्यात करें'}) }}</a>
+        </div>
+    </form>
+
+    <!-- Tabela -->
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>{{ traduzir({'pt':'Investidor','en':'Investor','es':'Inversor','de':'Investor','ru':'Инвестор','zh':'投资者','ar':'مستثمر','hi':'निवेशक'}) }}</th>
+                <th>{{ traduzir({'pt':'Token','en':'Token','es':'Token','de':'Token','ru':'Токен','zh':'代币','ar':'رمز','hi':'टोकन'}) }}</th>
+                <th>{{ traduzir({'pt':'Valor','en':'Value','es':'Valor','de':'Wert','ru':'Сумма','zh':'金额','ar':'قيمة','hi':'मूल्य'}) }}</th>
+                <th>{{ traduzir({'pt':'Data','en':'Date','es':'Fecha','de':'Datum','ru':'Дата','zh':'日期','ar':'تاريخ','hi':'तारीख'}) }}</th>
+                <th>{{ traduzir({'pt':'Status','en':'Status','es':'Estado','de':'Status','ru':'Статус','zh':'状态','ar':'الحالة','hi':'स्थिति'}) }}</th>
+                <th>ID Tx</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venda in vendas %}
+            <tr data-bs-toggle="modal" data-bs-target="#modalVenda{{ venda.id }}">
+                <td>{{ venda.investidor }}</td>
+                <td>{{ venda.token }}</td>
+                <td>{{ venda.valor }}</td>
+                <td>{{ venda.data }}</td>
+                <td>{{ venda.status }}</td>
+                <td>{{ venda.id_tx }}</td>
+            </tr>
+            <!-- Modal multilíngue para cada venda -->
+            <div class="modal fade" id="modalVenda{{ venda.id }}" tabindex="-1" aria-labelledby="modalVendaLabel{{ venda.id }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="modalVendaLabel{{ venda.id }}">{{ traduzir({'pt':'Detalhes da Venda','en':'Sale Details','es':'Detalles de la Venta','de':'Verkaufsdetails','ru':'Детали продажи','zh':'销售详情','ar':'تفاصيل البيع','hi':'बिक्री विवरण'}) }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ traduzir({'pt':'Fechar','en':'Close','es':'Cerrar','de':'Schließen','ru':'Закрыть','zh':'关闭','ar':'إغلاق','hi':'बंद करें'}) }}"></button>
+                  </div>
+                  <div class="modal-body">
+                    <ul>
+                      <li><b>{{ traduzir({'pt':'Investidor','en':'Investor','es':'Inversor','de':'Investor','ru':'Инвестор','zh':'投资者','ar':'مستثمر','hi':'निवेशक'}) }}:</b> {{ venda.investidor }}</li>
+                      <li><b>{{ traduzir({'pt':'Token','en':'Token','es':'Token','de':'Token','ru':'Токен','zh':'代币','ar':'رمز','hi':'टोकन'}) }}:</b> {{ venda.token }}</li>
+                      <li><b>{{ traduzir({'pt':'Valor','en':'Value','es':'Valor','de':'Wert','ru':'Сумма','zh':'金额','ar':'قيمة','hi':'मूल्य'}) }}:</b> {{ venda.valor }}</li>
+                      <li><b>{{ traduzir({'pt':'Data','en':'Date','es':'Fecha','de':'Datum','ru':'Дата','zh':'日期','ar':'تاريخ','hi':'तारीख'}) }}:</b> {{ venda.data }}</li>
+                      <li><b>{{ traduzir({'pt':'Status','en':'Status','es':'Estado','de':'Status','ru':'Статус','zh':'状态','ar':'الحالة','hi':'स्थिति'}) }}:</b> {{ venda.status }}</li>
+                      <li><b>ID Tx:</b> {{ venda.id_tx }}</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="text-center">
+      <small class="text-muted">
+          {{ traduzir({'pt':'Versão beta board — dashboard multi-módulo | ©️2025 AgroDigital5.0™️',
+                      'en':'Beta board version — multi-module dashboard | ©️2025 AgroDigital5.0™️',
+                      'es':'Versión beta board — dashboard multi-módulo | ©️2025 AgroDigital5.0™️',
+                      'de':'Beta-Board-Version — Multi-Modul-Dashboard | ©️2025 AgroDigital5.0™️',
+                      'ru':'Бета-версия board — многомодульная панель | ©️2025 AgroDigital5.0™️',
+                      'zh':'Beta board 版本 — 多模块仪表板 | ©️2025 AgroDigital5.0™️',
+                      'ar':'إصدار beta board — لوحة معلومات متعددة الوحدات | ©️2025 AgroDigital5.0™️',
+                      'hi':'बीटा बोर्ड संस्करण — मल्टी-मॉड्यूल डैशबोर्ड | ©️2025 AgroDigital5.0™️'}) }}
+      </small>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Gráfico de vendas (multi-idiomas)
+    const vendasData = [
+      {% for venda in vendas %}
+        {data: "{{ venda.data }}", valor: {{ venda.valor }} },
+      {% endfor %}
+    ];
+    const agrupado = {};
+    vendasData.forEach(v => { agrupado[v.data] = (agrupado[v.data]||0) + v.valor; });
+    const labels = Object.keys(agrupado);
+    const valores = Object.values(agrupado);
+    Plotly.newPlot('graficoVendas', [{
+      x: labels, y: valores, type: 'bar', marker: { color:'#15cd6d' }
+    }], {
+      margin:{t:20,r:8,l:40,b:35},
+      height:150, xaxis:{title:'{{ traduzir({"pt":"Data","en":"Date","es":"Fecha","de":"Datum","ru":"Дата","zh":"日期","ar":"تاريخ","hi":"तारीख"}) }}'}, 
+      yaxis:{title:'{{ traduzir({"pt":"Vendas","en":"Sales","es":"Ventas","de":"Verkäufe","ru":"Продажи","zh":"销售","ar":"مبيعات","hi":"बिक्री"}) }}'}
+    }, {displayModeBar:false});
+</script>
+</body>
+</html>

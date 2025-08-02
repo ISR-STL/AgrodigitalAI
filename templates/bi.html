@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ traduzir({
+        'pt':'Dashboard BI/Analytics',
+        'en':'BI/Analytics Dashboard',
+        'es':'Panel de BI/Analytics',
+        'de':'BI/Analytics Dashboard',
+        'ru':'Панель BI/Аналитики',
+        'zh':'BI/分析仪表板',
+        'ar':'لوحة BI / التحليلات',
+        'hi':'BI/एनालिटिक्स डैशबोर्ड'
+    }) }} | AgroDigital5.0™️</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-success">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('painel', lang=lang) }}">AgroDigital5.0™️</a>
+        <a href="{{ url_for('logout', lang=lang) }}" class="btn btn-danger btn-sm">
+            {{ traduzir({'pt':'Sair','en':'Logout','es':'Salir','de':'Abmelden','ru':'Выйти','zh':'退出','ar':'خروج','hi':'लॉग आउट'}) }}
+        </a>
+    </div>
+</nav>
+<div class="container mt-5">
+    <h4>{{ traduzir({
+        'pt':'Business Intelligence (BI) e Analytics',
+        'en':'Business Intelligence (BI) & Analytics',
+        'es':'Inteligencia de Negocios (BI) y Analítica',
+        'de':'Business Intelligence (BI) & Analytics',
+        'ru':'Бизнес-аналитика (BI) и аналитика',
+        'zh':'商业智能(BI)与分析',
+        'ar':'ذكاء الأعمال (BI) والتحليلات',
+        'hi':'बिजनेस इंटेलिजेंस (BI) और एनालिटिक्स'
+    }) }}</h4>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="alert alert-success">
+                <b>{{ traduzir({'pt':'Total de vendas','en':'Total sales','es':'Ventas totales','de':'Gesamtumsatz','ru':'Всего продаж','zh':'总销售额','ar':'إجمالي المبيعات','hi':'कुल बिक्री'}) }}:</b>
+                R$ {{ total_vendido }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="alert alert-primary">
+                <b>{{ traduzir({'pt':'Transações','en':'Transactions','es':'Transacciones','de':'Transaktionen','ru':'Транзакции','zh':'交易','ar':'المعاملات','hi':'लेन-देन'}) }}:</b>
+                {{ vendas|length }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="alert alert-info">
+                <b>{{ traduzir({'pt':'Tokens únicos','en':'Unique tokens','es':'Tokens únicos','de':'Einzigartige Token','ru':'Уникальные токены','zh':'唯一代币','ar':'رموز فريدة','hi':'अद्वितीय टोकन'}) }}:</b>
+                {{ vendas|map(attribute='token')|unique|length }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico por status -->
+    <div class="mb-4">
+        <h6>{{ traduzir({'pt':'Vendas por Status','en':'Sales by Status','es':'Ventas por estado','de':'Verkäufe nach Status','ru':'Продажи по статусу','zh':'按状态分类的销售','ar':'المبيعات حسب الحالة','hi':'स्थिति के अनुसार बिक्री'}) }}</h6>
+        <div id="graficoStatus"></div>
+    </div>
+    <!-- Gráfico de vendas por token -->
+    <div class="mb-4">
+        <h6>{{ traduzir({'pt':'Volume por Token','en':'Volume by Token','es':'Volumen por Token','de':'Volumen nach Token','ru':'Объем по токенам','zh':'按代币分类的交易量','ar':'الحجم حسب الرمز','hi':'टोकन के अनुसार वॉल्यूम'}) }}</h6>
+        <div id="graficoToken"></div>
+    </div>
+    <div class="mt-4 text-center">
+        <a href="{{ url_for('painel', lang=lang) }}" class="btn btn-outline-secondary">{{ traduzir({'pt':'Voltar ao painel','en':'Back to dashboard','es':'Volver al panel','de':'Zurück zum Dashboard','ru':'Назад к панели','zh':'返回仪表板','ar':'العودة إلى لوحة التحكم','hi':'डैशबोर्ड पर लौटें'}) }}</a>
+    </div>
+</div>
+
+<script>
+    // Gráfico por status
+    const vendasPorStatus = {};
+    {% for v in vendas %}
+      vendasPorStatus["{{ v.status }}"] = (vendasPorStatus["{{ v.status }}"] || 0) + {{ v.valor }};
+    {% endfor %}
+    Plotly.newPlot('graficoStatus', [{
+      x: Object.keys(vendasPorStatus), y: Object.values(vendasPorStatus), type:'bar',
+      marker:{color:'#23b27b'}
+    }], {
+      title: '{{ traduzir({"pt":"Vendas por Status","en":"Sales by Status","es":"Ventas por estado","de":"Verkäufe nach Status","ru":"Продажи по статусу","zh":"按状态分类的销售","ar":"المبيعات حسب الحالة","hi":"स्थिति के अनुसार बिक्री"}) }}',
+      margin:{t:30,r:8,l:40,b:35}
+    }, {displayModeBar:false});
+
+    // Gráfico por token
+    const vendasPorToken = {};
+    {% for v in vendas %}
+      vendasPorToken["{{ v.token }}"] = (vendasPorToken["{{ v.token }}"] || 0) + {{ v.valor }};
+    {% endfor %}
+    Plotly.newPlot('graficoToken', [{
+      x: Object.keys(vendasPorToken), y: Object.values(vendasPorToken), type:'bar',
+      marker:{color:'#1f8cd9'}
+    }], {
+      title: '{{ traduzir({"pt":"Volume por Token","en":"Volume by Token","es":"Volumen por Token","de":"Volumen nach Token","ru":"Объем по токенам","zh":"按代币分类的交易量","ar":"الحجم حسب الرمز","hi":"टोकन के अनुसार वॉल्यूम"}) }}',
+      margin:{t:30,r:8,l:40,b:35}
+    }, {displayModeBar:false});
+</script>
+</body>
+</html>
