@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ traduzir({
+        'pt':'Cadastro de Usuário',
+        'en':'User Registration',
+        'es':'Registro de Usuario',
+        'de':'Benutzerregistrierung',
+        'ru':'Регистрация пользователя',
+        'zh':'用户注册',
+        'ar':'تسجيل مستخدم',
+        'hi':'यूज़र पंजीकरण'
+    }) }} | AgroDigital5.0™️</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-success">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('painel') }}">AgroDigital5.0™️</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm">
+            {{ traduzir({'pt':'Sair','en':'Logout','es':'Salir','de':'Abmelden','ru':'Выйти','zh':'退出','ar':'خروج','hi':'लॉग आउट'}) }}
+        </a>
+    </div>
+</nav>
+<div class="container mt-5">
+    <h4>
+      {% if editar %}
+        {{ traduzir({'pt':'Editar Usuário','en':'Edit User','es':'Editar Usuario','de':'Benutzer bearbeiten','ru':'Редактировать пользователя','zh':'编辑用户','ar':'تعديل المستخدم','hi':'यूज़र संपादित करें'}) }}
+      {% else %}
+        {{ traduzir({'pt':'Novo Usuário','en':'New User','es':'Nuevo Usuario','de':'Neuer Benutzer','ru':'Новый пользователь','zh':'新用户','ar':'مستخدم جديد','hi':'नया उपयोगकर्ता'}) }}
+      {% endif %}
+    </h4>
+    <form method="POST" class="mt-3">
+        <div class="mb-3">
+            <label for="username">{{ traduzir({'pt':'Usuário','en':'Username','es':'Usuario','de':'Benutzername','ru':'Имя пользователя','zh':'用户名','ar':'اسم المستخدم','hi':'उपयोगकर्ता नाम'}) }}:</label>
+            <input type="text" name="username" id="username" class="form-control" required
+                   value="{{ user.username if editar else '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="password">{{ traduzir({'pt':'Senha','en':'Password','es':'Contraseña','de':'Passwort','ru':'Пароль','zh':'密码','ar':'كلمة المرور','hi':'पासवर्ड'}) }}:</label>
+            <input type="password" name="password" id="password" class="form-control" {% if not editar %}required{% endif %}>
+            {% if editar %}
+                <small class="text-muted">{{ traduzir({'pt':'Deixe em branco para não alterar a senha','en':'Leave blank to keep password','es':'Dejar en blanco para no cambiar la contraseña','de':'Leer lassen, um Passwort nicht zu ändern','ru':'Оставьте пустым, чтобы не менять пароль','zh':'留空以不更改密码','ar':'اتركه فارغًا لعدم تغيير كلمة المرور','hi':'पासवर्ड नहीं बदलना है तो खाली छोड़ें'}) }}</small>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="role">{{ traduzir({'pt':'Permissão','en':'Role','es':'Rol','de':'Rolle','ru':'Роль','zh':'角色','ar':'الدور','hi':'भूमिका'}) }}:</label>
+            <select name="role" id="role" class="form-control">
+                <option value="user" {% if user and user.role == "user" %}selected{% endif %}>{{ traduzir({'pt':'Usuário comum','en':'Common user','es':'Usuario común','de':'Standardbenutzer','ru':'Обычный пользователь','zh':'普通用户','ar':'مستخدم عادي','hi':'साधारण उपयोगकर्ता'}) }}</option>
+                <option value="supervisor" {% if user and user.role == "supervisor" %}selected{% endif %}>{{ traduzir({'pt':'Supervisor','en':'Supervisor','es':'Supervisor','de':'Supervisor','ru':'Супервайзер','zh':'主管','ar':'مشرف','hi':'पर्यवेक्षक'}) }}</option>
+                <option value="gerente" {% if user and user.role == "gerente" %}selected{% endif %}>{{ traduzir({'pt':'Gerente','en':'Manager','es':'Gerente','de':'Manager','ru':'Менеджер','zh':'经理','ar':'مدير','hi':'प्रबंधक'}) }}</option>
+                <option value="admin" {% if user and user.role == "admin" %}selected{% endif %}>{{ traduzir({'pt':'Administrador','en':'Administrator','es':'Administrador','de':'Administrator','ru':'Администратор','zh':'管理员','ar':'مسؤول','hi':'प्रशासक'}) }}</option>
+            </select>
+        </div>
+        <button class="btn btn-success">{{ traduzir({'pt':'Salvar','en':'Save','es':'Guardar','de':'Speichern','ru':'Сохранить','zh':'保存','ar':'حفظ','hi':'सहेजें'}) }}</button>
+        <a href="{{ url_for('usuarios') }}" class="btn btn-outline-secondary">{{ traduzir({'pt':'Cancelar','en':'Cancel','es':'Cancelar','de':'Abbrechen','ru':'Отмена','zh':'取消','ar':'إلغاء','hi':'रद्द करें'}) }}</a>
+    </form>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <div class="alert alert-danger mt-3">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+</div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ traduzir({
+        'pt':'Usuários | AgroDigital5.0™️',
+        'en':'Users | AgroDigital5.0™️',
+        'es':'Usuarios | AgroDigital5.0™️',
+        'de':'Benutzer | AgroDigital5.0™️',
+        'ru':'Пользователи | AgroDigital5.0™️',
+        'zh':'用户 | AgroDigital5.0™️',
+        'ar':'المستخدمون | AgroDigital5.0™️',
+        'hi':'उपयोगकर्ता | AgroDigital5.0™️'
+    }) }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-success">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('painel') }}">AgroDigital5.0™️</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm">
+            {{ traduzir({'pt':'Sair','en':'Logout','es':'Salir','de':'Abmelden','ru':'Выйти','zh':'退出','ar':'خروج','hi':'लॉग आउट'}) }}
+        </a>
+    </div>
+</nav>
+<div class="container mt-5">
+    <h4>{{ traduzir({'pt':'Usuários','en':'Users','es':'Usuarios','de':'Benutzer','ru':'Пользователи','zh':'用户','ar':'المستخدمون','hi':'उपयोगकर्ता'}) }}</h4>
+    <a href="{{ url_for('novo_usuario') }}" class="btn btn-primary btn-sm mb-3">
+        {{ traduzir({'pt':'Novo Usuário','en':'New User','es':'Nuevo Usuario','de':'Neuer Benutzer','ru':'Новый пользователь','zh':'新用户','ar':'مستخدم جديد','hi':'नया उपयोगकर्ता'}) }}
+    </a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>{{ traduzir({'pt':'Usuário','en':'Username','es':'Usuario','de':'Benutzername','ru':'Имя пользователя','zh':'用户名','ar':'اسم المستخدم','hi':'उपयोगकर्ता नाम'}) }}</th>
+                <th>{{ traduzir({'pt':'Permissão','en':'Role','es':'Rol','de':'Rolle','ru':'Роль','zh':'角色','ar':'الدور','hi':'भूमिका'}) }}</th>
+                <th>{{ traduzir({'pt':'Ações','en':'Actions','es':'Acciones','de':'Aktionen','ru':'Действия','zh':'操作','ar':'إجراءات','hi':'कार्रवाई'}) }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr>
+                <td>{{ u.id }}</td>
+                <td>{{ u.username }}</td>
+                <td>{{ traduzir({'pt':u.role, 'en':u.role, 'es':u.role, 'de':u.role, 'ru':u.role, 'zh':u.role, 'ar':u.role, 'hi':u.role}) }}</td>
+                <td>
+                    {% if u.username != 'admin' %}
+                    <a href="{{ url_for('editar_usuario', user_id=u.id) }}" class="btn btn-warning btn-sm me-2">
+                        {{ traduzir({'pt':'Editar','en':'Edit','es':'Editar','de':'Bearbeiten','ru':'Редактировать','zh':'编辑','ar':'تعديل','hi':'संपादित करें'}) }}
+                    </a>
+                    <a href="{{ url_for('deletar_usuario', user_id=u.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('{{ traduzir({'pt':'Confirma a remoção?','en':'Confirm removal?','es':'¿Confirmar eliminación?','de':'Entfernung bestätigen?','ru':'Подтвердить удаление?','zh':'确认删除？','ar':'تأكيد الحذف؟','hi':'हटाने की पुष्टि करें?'}) }}')">
+                        {{ traduzir({'pt':'Remover','en':'Remove','es':'Eliminar','de':'Entfernen','ru':'Удалить','zh':'移除','ar':'إزالة','hi':'हटाएं'}) }}
+                    </a>
+                    {% else %}
+                    <span class="badge bg-secondary">
+                        {{ traduzir({'pt':'Protegido','en':'Protected','es':'Protegido','de':'Geschützt','ru':'Защищено','zh':'受保护','ar':'محمي','hi':'सुरक्षित'}) }}
+                    </span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('painel') }}" class="btn btn-outline-secondary mt-3">
+        {{ traduzir({'pt':'Voltar','en':'Back','es':'Volver','de':'Zurück','ru':'Назад','zh':'返回','ar':'عودة','hi':'वापस'}) }}
+    </a>
+</div>
+</body>
+</html>

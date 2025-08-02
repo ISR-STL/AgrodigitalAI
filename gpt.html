@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ traduzir({
+        'pt':'Assistente Inteligente',
+        'en':'Smart Assistant',
+        'es':'Asistente Inteligente',
+        'de':'Intelligenter Assistent',
+        'ru':'Интеллектуальный помощник',
+        'zh':'智能助手',
+        'ar':'المساعد الذكي',
+        'hi':'स्मार्ट सहायक'
+    }) }} | AgroDigital5.0™️</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .gpt-box { max-width: 600px; margin: 0 auto; margin-top: 50px; background: #f7fff9; border-radius: 10px; padding: 32px 24px; box-shadow: 0 2px 16px #25e79e0f;}
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-success">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('painel', lang=lang) }}">AgroDigital5.0™️</a>
+        <a href="{{ url_for('logout', lang=lang) }}" class="btn btn-danger btn-sm">
+            {{ traduzir({'pt':'Sair','en':'Logout','es':'Salir','de':'Abmelden','ru':'Выйти','zh':'退出','ar':'خروج','hi':'लॉग आउट'}) }}
+        </a>
+    </div>
+</nav>
+<div class="gpt-box">
+    <h4>
+        {{ traduzir({
+            'pt':'Consultor IA (GPT-4o) — Tire dúvidas e peça sugestões!',
+            'en':'AI Consultant (GPT-4o) — Ask questions and get suggestions!',
+            'es':'Consultor IA (GPT-4o) — ¡Haz preguntas y recibe sugerencias!',
+            'de':'KI-Berater (GPT-4o) — Stellen Sie Fragen und erhalten Sie Vorschläge!',
+            'ru':'Консультант ИИ (GPT-4o) — Задайте вопросы и получите предложения!',
+            'zh':'AI顾问 (GPT-4o) — 提问并获得建议！',
+            'ar':'المستشار الذكي (GPT-4o) — اسأل وتلق اقتراحات!',
+            'hi':'AI सलाहकार (GPT-4o) — सवाल पूछें और सुझाव पाएं!'
+        }) }}
+    </h4>
+    <form id="gptForm" method="POST" action="{{ url_for('gpt', lang=lang) }}">
+        <div class="mb-3">
+            <label for="pergunta">
+                {{ traduzir({
+                    'pt':'Pergunta para o GPT','en':'Question for GPT','es':'Pregunta para GPT',
+                    'de':'Frage an GPT','ru':'Вопрос для GPT','zh':'给GPT的问题','ar':'سؤال لـ GPT','hi':'GPT के लिए प्रश्न'
+                }) }}
+            </label>
+            <textarea id="pergunta" name="pergunta" class="form-control" rows="3" required>{{ pergunta|default('') }}</textarea>
+        </div>
+        <button class="btn btn-success" id="sendBtn">
+            {{ traduzir({
+                'pt':'Enviar','en':'Send','es':'Enviar','de':'Senden','ru':'Отправить',
+                'zh':'发送','ar':'إرسال','hi':'भेजें'
+            }) }}
+        </button>
+    </form>
+    <div class="mt-4">
+        {% if resposta %}
+        <div class="alert alert-info">
+            <strong>
+                {{ traduzir({
+                    'pt':'Resposta:','en':'Answer:','es':'Respuesta:','de':'Antwort:',
+                    'ru':'Ответ:','zh':'答案:','ar':'الإجابة:','hi':'उत्तर:'
+                }) }}
+            </strong>
+            <br>
+            {{ resposta }}
+        </div>
+        {% endif %}
+    </div>
+    <a href="{{ url_for('painel', lang=lang) }}" class="btn btn-outline-secondary mt-2">
+        {{ traduzir({
+            'pt':'Voltar ao painel','en':'Back to dashboard','es':'Volver al panel',
+            'de':'Zurück zum Dashboard','ru':'Назад к панели','zh':'返回仪表板',
+            'ar':'العودة إلى لوحة التحكم','hi':'डैशबोर्ड पर लौटें'
+        }) }}
+    </a>
+</div>
+<script>
+    // (Opcional) Ajax submit, loading animation etc.
+</script>
+</body>
+</html>      

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ traduzir({
+        'pt':'Marketplace de NFTs/Tokens',
+        'en':'NFT/Token Marketplace',
+        'es':'Marketplace de NFTs/Tokens',
+        'de':'NFT/Token-Marktplatz',
+        'ru':'Маркетплейс NFT/Токенов',
+        'zh':'NFT/代币市场',
+        'ar':'سوق الرموز/NFT',
+        'hi':'NFT/टोकन मार्केटप्लेस'
+    }) }} | AgroDigital5.0™️</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+      .nft-card { box-shadow:0 2px 7px #eee; border-radius:12px; margin: 18px 0; background: #fcfcfc;}
+      .nft-price { font-weight:bold; color:#19a870; }
+      .nft-vendido { color: #aaa; text-decoration: line-through;}
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-success">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('painel') }}">AgroDigital5.0™️</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm">
+            {{ traduzir({'pt':'Sair','en':'Logout','es':'Salir','de':'Abmelden','ru':'Выйти','zh':'退出','ar':'خروج','hi':'लॉग आउट'}) }}
+        </a>
+    </div>
+</nav>
+<div class="container mt-4">
+    <h4>
+        {{ traduzir({
+            'pt':'Marketplace de NFTs/Tokens','en':'NFT/Token Marketplace','es':'Marketplace de NFTs/Tokens','de':'NFT/Token-Marktplatz',
+            'ru':'Маркетплейс NFT/Токенов','zh':'NFT/代币市场','ar':'سوق الرموز/NFT','hi':'NFT/टोकन मार्केटप्लेस'
+        }) }}
+    </h4>
+    <div class="row">
+        {% for nft in nfts %}
+        <div class="col-md-4">
+            <div class="nft-card p-3 mb-4">
+                <h6>{{ nft.nome }}</h6>
+                <div>
+                  {% if nft.status == 'vendido' %}
+                    <span class="nft-vendido">{{ traduzir({'pt':'Vendido','en':'Sold','es':'Vendido','de':'Verkauft','ru':'Продано','zh':'已售出','ar':'تم البيع','hi':'बिक चुका है'}) }}</span>
+                  {% else %}
+                    <span class="nft-price">R$ {{ nft.preco }}</span>
+                  {% endif %}
+                </div>
+                <div class="my-2 small text-muted">
+                    {{ traduzir({'pt':'Proprietário','en':'Owner','es':'Propietario','de':'Besitzer','ru':'Владелец','zh':'所有者','ar':'المالك','hi':'मालिक'}) }}: 
+                    {{ nft.owner if nft.owner else traduzir({'pt':'Disponível','en':'Available','es':'Disponible','de':'Verfügbar','ru':'Доступно','zh':'可用','ar':'متاح','hi':'उपलब्ध'}) }}
+                </div>
+                {% if nft.status != 'vendido' %}
+                <a href="{{ url_for('comprar_nft', nft_id=nft.id) }}" class="btn btn-success btn-sm">
+                    {{ traduzir({'pt':'Comprar NFT','en':'Buy NFT','es':'Comprar NFT','de':'NFT kaufen','ru':'Купить NFT','zh':'购买NFT','ar':'شراء NFT','hi':'NFT खरीदें'}) }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-3">
+        <a href="{{ url_for('painel') }}" class="btn btn-outline-secondary">
+            {{ traduzir({'pt':'Voltar ao painel','en':'Back to dashboard','es':'Volver al panel','de':'Zurück zum Dashboard','ru':'Назад к панели','zh':'返回仪表板','ar':'العودة إلى لوحة التحكم','hi':'डैशबोर्ड पर लौटें'}) }}
+        </a>
+    </div>
+</div>
+</body>
+</html>
