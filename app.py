@@ -5,19 +5,21 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import io, csv, datetime, requests, os
 
+# --- APP SETUP ---
 app = Flask(__name__)
 app.secret_key = os.getenv('APP_SECRET_KEY', 'senha-forte-aqui')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///agrodigital.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///agrodigital.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# --- RATE LIMIT - Flask-Limiter 3.x (correto) ---
+# --- RATE LIMITER ---
 limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["1000 per day", "200 per hour"]
 )
 limiter.init_app(app)
 
-# --- SUPORTE MULTILÍNGUE ---
+# --- MULTILÍNGUE ---
 IDIOMAS = ['pt','en','es','de','ru','zh','ar','hi']
 def traduzir(textos):
     return textos.get(getattr(g, 'lang', 'pt'), list(textos.values())[0])
@@ -36,7 +38,6 @@ def set_lang(lang):
     resp.set_cookie('lang', lang, max_age=30*24*3600)
     return resp
 
-# --- ROTA PRINCIPAL (ACESSO RAIZ) ---
 @app.route('/')
 def index():
     return redirect(url_for('login'))
@@ -70,7 +71,7 @@ class NFT(db.Model):
     owner = db.Column(db.String(80))
     status = db.Column(db.String(20), default='disponivel')
 
-# --- LOGIN ---
+# --- LOGIN SETUP ---
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -337,7 +338,9 @@ def cria_banco_admin():
     if add_data:
         db.session.commit()
 
+# --- ENTRYPOINT ---
 if __name__ == "__main__":
     with app.app_context():
         cria_banco_admin()
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
