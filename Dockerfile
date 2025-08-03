@@ -1,20 +1,19 @@
-# Use a imagem oficial do Python
+# Imagem oficial Python 3.11
 FROM python:3.11-slim
-
-# Instala dependências de build e SQLite
-RUN apt-get update && \
-    apt-get install -y gcc libpq-dev sqlite3 python3-dev && \
-    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY requirements.txt .
+# Copia todos os arquivos do projeto para dentro do container
+COPY . /app
+
+# Instala dependências de sistema para SQLite e builds Python
+RUN apt-get update && apt-get install -y gcc libsqlite3-dev && rm -rf /var/lib/apt/lists/*
+
+# Instala dependências Python
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY . .
+EXPOSE 5000
 
-# Expor porta padrão do Railway
-EXPOSE 8080
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:app"]
+# Comando de inicialização do Gunicorn apontando para o seu app Flask
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000"]
