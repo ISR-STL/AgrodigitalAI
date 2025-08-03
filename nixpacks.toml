@@ -4,8 +4,7 @@ nixPkgs = [
   "python311Packages.pip",
   "python311Packages.setuptools",
   "python311Packages.wheel",
-  "python311Packages.pysqlite", # Corrigido!
-  "sqlite"
+  "python311Packages.pysqlite" # Suporte SQLite ao Python
 ]
 
 [phases.install]
