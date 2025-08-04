@@ -340,5 +340,5 @@ def cria_banco_admin():
 if __name__ == "__main__":
     with app.app_context():
         cria_banco_admin()
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 8000))  # Porta padrão ajustada para 8000, mas sempre usa o valor da env PORT
     app.run(host="0.0.0.0", port=port)
