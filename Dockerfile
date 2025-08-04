@@ -7,13 +7,15 @@ WORKDIR /app
 COPY . /app
 
 # Instala dependências de sistema para SQLite e builds Python
-RUN apt-get update && apt-get install -y gcc libsqlite3-dev && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+ && apt-get install -y gcc libsqlite3-dev \
+ && rm -rf /var/lib/apt/lists/*
 
 # Instala dependências Python
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-EXPOSE 5000
+EXPOSE 8000
 
-# Comando de inicialização do Gunicorn apontando para o seu app Flask
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000"]
+# Comando de inicialização do Gunicorn apontando para seu app Flask
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:8000"]
